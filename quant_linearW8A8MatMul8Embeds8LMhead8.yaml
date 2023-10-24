@@ -1,0 +1,56 @@
+# Quantization variables
+observer_freeze_epoch: 1
+bn_freeze_epoch: 1
+qat_start_epoch: 0
+
+quantization_modifiers:
+  - !QuantizationModifier
+    start_epoch: eval(qat_start_epoch)
+    disable_quantization_observer_epoch: eval(observer_freeze_epoch)
+    freeze_bn_stats_epoch: eval(bn_freeze_epoch)
+    ignore: ["QuantizableMatMul"]
+    scheme_overrides:
+      Linear:
+        input_activations:
+          num_bits: 8
+          symmetric: False
+        weights:
+          num_bits: 8
+          symmetric: True
+      GELU:
+        input_activations: null
+        output_activations: null
+      LPLayerNorm:
+        input_activations: null
+        output_activations: null
+      MatMulLeftInput_QK:
+        input_activations:
+          num_bits: 8
+          symmetric: True
+        output_activations: null
+      MatMulRightInput_QK:
+        input_activations:
+          num_bits: 8
+          symmetric: False
+        output_activations: null
+      MatMulOutput_QK:
+        input_activations: null
+        output_activations: null
+      MatMulLeftInput_PV:
+        input_activations:
+          num_bits: 8
+          symmetric: False
+        output_activations: null
+      MatMulRightInput_PV:
+        input_activations:
+          num_bits: 8
+          symmetric: True
+        output_activations: null
+      MatMulOutput_PV:
+        input_activations: null
+        output_activations: null
+      SharedEmbedding:
+        input_activations: null
+        weights:
+          num_bits: 8
+          symmetric: False
